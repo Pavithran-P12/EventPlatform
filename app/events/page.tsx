@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { EventCard } from "@/components/event-card";
-import { SiteHeader } from "@/components/site-header";
+import { SiteHeaderView } from "@/components/site-header-view";
 import { mockEvents, type EventCategory } from "@/lib/mock/data";
 
 const categories: ("All" | EventCategory)[] = [
@@ -35,7 +35,7 @@ export default function EventsPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeaderView displayName={null} />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
         <h1 className="text-3xl font-bold">Discover events</h1>
         <p className="mt-2 text-muted-foreground">

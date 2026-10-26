@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
+import { getCurrentUser } from "@/lib/auth";
 import { mockOrganization } from "@/lib/mock/data";
+import { SignOutButton } from "@/components/sign-out-button";
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: "🏠" },
@@ -14,6 +18,38 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          Loading dashboard…
+        </div>
+      }
+    >
+      <DashboardShell>{children}</DashboardShell>
+    </Suspense>
+  );
+}
+
+async function DashboardShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
+  const displayName =
+    user.user_metadata?.full_name ?? user.email ?? "Organiser";
+  const initials = displayName
+    .split(" ")
+    .map((part: string) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
@@ -44,7 +80,8 @@ export default function DashboardLayout({
           ))}
         </nav>
         <div className="p-4 text-xs text-muted-foreground">
-          Frontend preview — sample data only. Sign-in arrives in Phase 3.
+          Signed in as {displayName}. Event data is still sample data —
+          live organisations arrive next in Phase 3.
         </div>
       </aside>
       <div className="min-w-0 flex-1">
@@ -54,12 +91,13 @@ export default function DashboardLayout({
             Organiser dashboard
           </p>
           <div className="flex items-center gap-3">
-            <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-              Preview mode
+            <span className="hidden text-sm text-muted-foreground sm:block">
+              {displayName}
             </span>
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              TU
+              {initials || "U"}
             </span>
+            <SignOutButton />
           </div>
         </header>
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>

@@ -23,11 +23,17 @@ function formatIssues(error: z.ZodError): string {
     .join("; ");
 }
 
-export function getPublicEnv(source: NodeJS.ProcessEnv = process.env): PublicEnv {
+export function getPublicEnv(source?: NodeJS.ProcessEnv): PublicEnv {
+  // Literal process.env.NEXT_PUBLIC_* references are required so Next.js
+  // can inline them into the browser bundle.
   const result = publicEnvSchema.safeParse({
-    NEXT_PUBLIC_SUPABASE_URL: source.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_APP_URL: source.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SUPABASE_URL:
+      source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_APP_URL:
+      source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
   });
   if (!result.success) {
     throw new Error(`Invalid public environment: ${formatIssues(result.error)}`);
@@ -35,16 +41,21 @@ export function getPublicEnv(source: NodeJS.ProcessEnv = process.env): PublicEnv
   return result.data;
 }
 
-export function getServerEnv(source: NodeJS.ProcessEnv = process.env): ServerEnv {
+export function getServerEnv(source?: NodeJS.ProcessEnv): ServerEnv {
+  const env = source ?? process.env;
   const result = serverEnvSchema.safeParse({
-    NEXT_PUBLIC_SUPABASE_URL: source.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_APP_URL: source.NEXT_PUBLIC_APP_URL,
-    SUPABASE_SERVICE_ROLE_KEY: source.SUPABASE_SERVICE_ROLE_KEY,
-    PAYPAL_ENV: source.PAYPAL_ENV,
-    PAYPAL_CLIENT_ID: source.PAYPAL_CLIENT_ID || undefined,
-    PAYPAL_CLIENT_SECRET: source.PAYPAL_CLIENT_SECRET || undefined,
-    PAYPAL_WEBHOOK_ID: source.PAYPAL_WEBHOOK_ID || undefined,
+    NEXT_PUBLIC_SUPABASE_URL:
+      source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_APP_URL:
+      source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
+    SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
+    PAYPAL_ENV: env.PAYPAL_ENV,
+    PAYPAL_CLIENT_ID: env.PAYPAL_CLIENT_ID || undefined,
+    PAYPAL_CLIENT_SECRET: env.PAYPAL_CLIENT_SECRET || undefined,
+    PAYPAL_WEBHOOK_ID: env.PAYPAL_WEBHOOK_ID || undefined,
   });
   if (!result.success) {
     throw new Error(`Invalid server environment: ${formatIssues(result.error)}`);
@@ -52,12 +63,14 @@ export function getServerEnv(source: NodeJS.ProcessEnv = process.env): ServerEnv
   return result.data;
 }
 
-export function isSupabaseConfigured(
-  source: NodeJS.ProcessEnv = process.env,
-): boolean {
+export function isSupabaseConfigured(source?: NodeJS.ProcessEnv): boolean {
   return publicEnvSchema.safeParse({
-    NEXT_PUBLIC_SUPABASE_URL: source.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_APP_URL: source.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SUPABASE_URL:
+      source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_APP_URL:
+      source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
   }).success;
 }

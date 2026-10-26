@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { EventCard } from "@/components/event-card";
 import { SiteHeader } from "@/components/site-header";
@@ -33,7 +34,13 @@ export default function HomePage() {
   const featured = mockEvents.filter((e) => e.status === "published").slice(0, 3);
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <Suspense
+        fallback={
+          <div className="h-16 border-b border-border bg-background" />
+        }
+      >
+        <SiteHeader />
+      </Suspense>
       <main className="flex-1">
         <section className="mx-auto max-w-7xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <span className="rounded-full bg-accent px-3 py-1 text-sm font-medium text-primary">

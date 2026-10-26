@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { SiteHeader } from "@/components/site-header";
+import { SiteHeaderView } from "@/components/site-header-view";
 import {
   formatDateRange,
   formatPrice,
@@ -23,7 +23,7 @@ export default function EventDetailClient({ slug }: { slug: string }) {
   if (!event) {
     return (
       <div className="flex min-h-screen flex-col">
-        <SiteHeader />
+        <SiteHeaderView displayName={null} />
         <main className="mx-auto max-w-3xl flex-1 px-4 py-20 text-center">
           <h1 className="text-2xl font-bold">Event not found</h1>
           <p className="mt-2 text-muted-foreground">
@@ -60,7 +60,7 @@ export default function EventDetailClient({ slug }: { slug: string }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeaderView displayName={null} />
       <div className={`bg-gradient-to-br ${event.gradient}`}>
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-stone-800">
