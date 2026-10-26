@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { EventCard } from "@/components/event-card";
+import EventCard from "@/components/event-card";
 import {
   ArrowRightIcon,
   CardIcon,
@@ -11,7 +11,7 @@ import {
   SparklesIcon,
 } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
-import { mockEvents } from "@/lib/mock/data";
+import { getPublicEvents } from "@/lib/db/queries";
 
 const features = [
   {
@@ -51,8 +51,36 @@ const stats = [
   { value: "1", label: "Dashboard for everything" },
 ];
 
+async function FeaturedEvents() {
+  const events = await getPublicEvents();
+  const featured = events.slice(0, 3);
+  if (featured.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+        <p className="font-medium text-slate-700">New events are being published</p>
+        <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
+          Organisers are setting up right now. Browse the discovery page or
+          create the first event for your organisation.
+        </p>
+        <Link
+          href="/dashboard/events/new"
+          className="mt-5 inline-block rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+        >
+          Create an event
+        </Link>
+      </div>
+    );
+  }
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {featured.map((event) => (
+        <EventCard key={event.id} event={event} />
+      ))}
+    </div>
+  );
+}
+
 export default function HomePage() {
-  const featured = mockEvents.filter((e) => e.status === "published").slice(0, 3);
   return (
     <div className="flex min-h-screen flex-col">
       <Suspense
@@ -168,11 +196,11 @@ export default function HomePage() {
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          <Suspense
+            fallback={<p className="text-sm text-slate-500">Loading events…</p>}
+          >
+            <FeaturedEvents />
+          </Suspense>
         </section>
 
         <section className="relative overflow-hidden bg-slate-950">

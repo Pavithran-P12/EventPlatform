@@ -98,11 +98,16 @@ npx supabase db reset
 
 - Supabase project: created (`unvhxnyydbimszvheqif`); foundation
   migration applied and verified (tables + RPC live).
+- Phase 3 migration (`20261027000002_registration.sql`): adds event
+  modules, registration forms/fields, registrations/answers, and the
+  atomic `register_for_free_event()` RPC. Apply it in the SQL Editor the
+  same way as the foundation migration, then verify the new tables
+  return HTTP 200.
 - Google OAuth: enabled in Supabase; local login verified end-to-end
   (Google sign-in → `/auth/callback` → `/dashboard`).
 - Vercel: deployed at `https://p12vizha.vercel.app`; env vars are set
   via the Vercel–Supabase connection. `NEXT_PUBLIC_APP_URL` must be set
   explicitly in Vercel (see Deployment above).
-- PayPal sandbox credentials: **pending** — required only in Phase 4.
+- PayPal sandbox credentials: verified working (Phase 4 checkout).
 - Tenant-isolation / RLS integration tests will be added with the
   features they protect (Phases 3–5), per the incremental plan.

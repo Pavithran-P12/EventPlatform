@@ -1,72 +1,71 @@
 import Link from "next/link";
 
-import {
-  CalendarIcon,
-  GlobeIcon,
-  MapPinIcon,
-  UsersIcon,
-} from "@/components/icons";
+import type { PublicEvent } from "@/lib/db/types";
 import {
   formatDateRange,
   formatPrice,
+  gradientForKey,
   seatsLeft,
-  type MockEvent,
-} from "@/lib/mock/data";
+} from "@/lib/db/helpers";
+import { CalendarIcon, GlobeIcon, MapPinIcon, UsersIcon } from "@/components/icons";
 
-export function EventCard({ event }: { event: MockEvent }) {
-  const left = seatsLeft(event);
+export default function EventCard({ event }: { event: PublicEvent }) {
+  const left = seatsLeft(event.capacity, event.registered_count);
+  const soldOut = left === 0;
+
   return (
     <Link
       href={`/events/${event.slug}`}
-      className="group overflow-hidden rounded-2xl border border-border bg-card shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
+      className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-lift"
     >
-      <div
-        className={`relative flex h-40 items-end bg-gradient-to-br p-4 ${event.gradient}`}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-        <span className="relative rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-800 shadow-sm">
-          {event.category}
+      <div className={`relative h-36 bg-gradient-to-br ${gradientForKey(event.slug)}`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-transparent" />
+        <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm">
+          {event.organization_name}
         </span>
-        <span className="relative ml-auto rounded-full bg-black/30 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+        <span
+          className={`absolute right-4 top-4 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${
+            event.is_free ? "bg-emerald-500 text-white" : "bg-white/95 text-slate-800"
+          }`}
+        >
           {formatPrice(event)}
         </span>
+        <p className="absolute bottom-3 left-4 right-4 truncate text-lg font-bold text-white drop-shadow-sm">
+          {event.title}
+        </p>
       </div>
-      <div className="space-y-3.5 p-5">
-        <div>
-          <h3 className="line-clamp-2 font-semibold leading-snug tracking-tight transition group-hover:text-primary">
-            {event.title}
-          </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            by {event.organization}
-          </p>
-        </div>
-        <div className="space-y-1.5 text-sm text-muted-foreground">
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="space-y-1.5 text-sm text-slate-500">
           <p className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 shrink-0 text-primary/70" />
-            {formatDateRange(event)}
+            <CalendarIcon className="h-4 w-4 shrink-0 text-slate-400" />
+            {formatDateRange(event.starts_at, event.ends_at)}
           </p>
           <p className="flex items-center gap-2">
-            {event.isOnline ? (
-              <GlobeIcon className="h-4 w-4 shrink-0 text-primary/70" />
+            {event.is_online ? (
+              <GlobeIcon className="h-4 w-4 shrink-0 text-slate-400" />
             ) : (
-              <MapPinIcon className="h-4 w-4 shrink-0 text-primary/70" />
+              <MapPinIcon className="h-4 w-4 shrink-0 text-slate-400" />
             )}
-            {event.isOnline ? "Online event" : event.location}
+            <span className="truncate">{event.is_online ? "Online event" : (event.location ?? "Location TBA")}</span>
+          </p>
+          <p className="flex items-center gap-2">
+            <UsersIcon className="h-4 w-4 shrink-0 text-slate-400" />
+            {event.registered_count} registered
+            {event.capacity ? ` · ${event.capacity} seats` : ""}
           </p>
         </div>
-        <div className="flex items-center justify-between border-t border-border pt-3.5">
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <UsersIcon className="h-4 w-4" />
-            {event.registered} registered
-          </span>
-          <span
-            className={`text-xs font-semibold ${left === 0 ? "text-red-600" : left !== null && left <= 20 ? "text-amber-600" : "text-emerald-600"}`}
-          >
-            {left === null
-              ? "Open registration"
-              : left === 0
-                ? "Sold out"
-                : `${left} seats left`}
+
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
+          {soldOut ? (
+            <span className="text-sm font-semibold text-red-600">Sold out</span>
+          ) : left !== null && left <= 20 ? (
+            <span className="text-sm font-semibold text-amber-600">Only {left} seats left</span>
+          ) : (
+            <span className="text-sm font-medium text-emerald-600">Registration open</span>
+          )}
+          <span className="text-sm font-semibold text-indigo-600 transition group-hover:translate-x-0.5">
+            View details →
           </span>
         </div>
       </div>
