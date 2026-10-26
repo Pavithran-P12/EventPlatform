@@ -26,6 +26,13 @@ describe("environment validation", () => {
     ).toThrow("Invalid public environment");
   });
 
+  it("defaults the app URL when it is not set", () => {
+    expect(
+      getPublicEnv({ ...validPublic, NEXT_PUBLIC_APP_URL: undefined })
+        .NEXT_PUBLIC_APP_URL,
+    ).toBe("http://localhost:3000");
+  });
+
   it("rejects a malformed app URL", () => {
     expect(() =>
       getPublicEnv({ ...validPublic, NEXT_PUBLIC_APP_URL: "not-a-url" }),
