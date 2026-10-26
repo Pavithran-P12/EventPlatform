@@ -9,8 +9,21 @@
 
 ## Environment variables
 
+Two separate settings locations — they never share a file, so changing
+one cannot break the other:
+
+| Setting | Local development | Production (Git/Vercel) |
+|---|---|---|
+| File / location | `.env.local` in the project folder (git-ignored, never committed) | Vercel → Project → Settings → Environment Variables |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | `https://p12vizha.vercel.app` |
+| Supabase keys | Same project values, copied from the dashboard | Same names, set per environment (Production/Preview) |
+| PayPal | Sandbox values in `.env.local` (Phase 4) | Sandbox values in Vercel env vars (Phase 4) |
+
 Copy `.env.example` to `.env.local` and fill in real values locally.
 Never commit `.env.local` or share secrets in chat/tickets.
+If `NEXT_PUBLIC_APP_URL` is missing, the app defaults to
+`http://localhost:3000` so builds never fail on it — still set it
+explicitly in Vercel so production links use the real origin.
 
 | Variable | Where to get it | Exposure |
 |---|---|---|
@@ -69,17 +82,27 @@ npx supabase db reset
 
 ## Deployment (Vercel)
 
-1. Import the repo in Vercel.
-2. Set the same env vars in Project Settings → Environment Variables.
-3. Set `NEXT_PUBLIC_APP_URL` to the production origin and add
-   `<origin>/auth/callback` to Supabase redirect URLs.
-4. PayPal webhook URL (Phase 4): `<origin>/api/webhooks/paypal`.
+1. Import the repo in Vercel (connected to GitHub `main`).
+2. Project → Settings → Environment Variables — set these for
+   Production (and Preview if used). These are the production settings;
+   they are independent of local `.env.local`:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `NEXT_PUBLIC_APP_URL=https://p12vizha.vercel.app`
+3. Supabase → Authentication → URL Configuration must allow
+   `https://p12vizha.vercel.app/auth/callback` (already added).
+4. PayPal webhook URL (Phase 4): `https://p12vizha.vercel.app/api/webhooks/paypal`.
 
 ## Current status / blockers
 
-- Supabase project: **not created yet** — migration and RLS policies are
-  written but not yet applied or tested against a live database.
-- Google OAuth: **not configured yet** — required before Phase 3 auth work.
+- Supabase project: created (`unvhxnyydbimszvheqif`); foundation
+  migration applied and verified (tables + RPC live).
+- Google OAuth: enabled in Supabase; local login verified end-to-end
+  (Google sign-in → `/auth/callback` → `/dashboard`).
+- Vercel: deployed at `https://p12vizha.vercel.app`; env vars are set
+  via the Vercel–Supabase connection. `NEXT_PUBLIC_APP_URL` must be set
+  explicitly in Vercel (see Deployment above).
 - PayPal sandbox credentials: **pending** — required only in Phase 4.
 - Tenant-isolation / RLS integration tests will be added with the
   features they protect (Phases 3–5), per the incremental plan.
