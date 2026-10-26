@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { LogoMark } from "@/components/icons";
 import { createClient } from "@/lib/supabase/client";
 
 function GoogleIcon() {
@@ -66,14 +67,12 @@ export function LoginForm({ errorCode }: { errorCode?: string }) {
 
   return (
     <div className="w-full max-w-md">
-      <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-        <div className="flex items-center gap-2 font-semibold">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            E
-          </span>
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
+        <div className="flex items-center gap-2.5 font-semibold tracking-tight">
+          <LogoMark />
           EventPlatform
         </div>
-        <h1 className="mt-6 text-2xl font-bold tracking-tight">
+        <h1 className="mt-7 text-2xl font-bold tracking-tight">
           Welcome back
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -94,7 +93,7 @@ export function LoginForm({ errorCode }: { errorCode?: string }) {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isLoading}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium shadow-sm transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium shadow-sm transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
         >
           <GoogleIcon />
           {isLoading ? "Redirecting to Google…" : "Continue with Google"}

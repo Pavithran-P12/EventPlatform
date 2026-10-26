@@ -2,15 +2,22 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
+import {
+  GlobeIcon,
+  HomeIcon,
+  LogoMark,
+  PlusIcon,
+  TicketIcon,
+} from "@/components/icons";
 import { getCurrentUser } from "@/lib/auth";
 import { mockOrganization } from "@/lib/mock/data";
 import { SignOutButton } from "@/components/sign-out-button";
 
 const nav = [
-  { href: "/dashboard", label: "Overview", icon: "🏠" },
-  { href: "/dashboard/events", label: "Events", icon: "🎟️" },
-  { href: "/dashboard/events/new", label: "Create event", icon: "➕" },
-  { href: "/events", label: "Public site", icon: "🌐" },
+  { href: "/dashboard", label: "Overview", Icon: HomeIcon },
+  { href: "/dashboard/events", label: "Events", Icon: TicketIcon },
+  { href: "/dashboard/events/new", label: "Create event", Icon: PlusIcon },
+  { href: "/events", label: "Public site", Icon: GlobeIcon },
 ];
 
 export default function DashboardLayout({
@@ -52,17 +59,15 @@ async function DashboardShell({
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
         <div className="border-b border-border p-5">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              E
-            </span>
+          <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
+            <LogoMark />
             EventPlatform
           </Link>
-          <div className="mt-4 rounded-xl bg-muted p-3">
+          <div className="mt-5 rounded-xl border border-border bg-muted/60 p-3.5">
             <p className="text-sm font-semibold">{mockOrganization.name}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {mockOrganization.plan}
             </p>
           </div>
@@ -72,29 +77,29 @@ async function DashboardShell({
             <Link
               key={item.href + item.label}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
             >
-              <span>{item.icon}</span>
+              <item.Icon className="h-4.5 w-4.5" />
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="p-4 text-xs text-muted-foreground">
+        <div className="border-t border-border p-4 text-xs leading-5 text-muted-foreground">
           Signed in as {displayName}. Event data is still sample data —
           live organisations arrive next in Phase 3.
         </div>
       </aside>
       <div className="min-w-0 flex-1">
-        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 sm:px-6">
-          <p className="font-semibold md:hidden">EventPlatform</p>
-          <p className="hidden text-sm text-muted-foreground md:block">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-md sm:px-6">
+          <p className="font-semibold tracking-tight md:hidden">EventPlatform</p>
+          <p className="hidden text-sm font-medium text-muted-foreground md:block">
             Organiser dashboard
           </p>
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-muted-foreground sm:block">
+            <span className="hidden max-w-48 truncate text-sm text-muted-foreground sm:block">
               {displayName}
             </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-semibold text-white shadow-sm">
               {initials || "U"}
             </span>
             <SignOutButton />

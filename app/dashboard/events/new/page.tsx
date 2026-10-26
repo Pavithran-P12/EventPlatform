@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { CheckCircleIcon } from "@/components/icons";
+
 const inputClass =
-  "w-full rounded-lg border border-border bg-card px-3.5 py-2.5 outline-none focus:border-primary";
+  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/40";
 const labelClass = "mb-1.5 block text-sm font-medium";
 
 const moduleOptions = [
@@ -31,16 +33,16 @@ export default function NewEventPage() {
         <Link href="/dashboard/events" className="text-sm font-medium text-primary hover:underline">
           ← Back to events
         </Link>
-        <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Create event</h1>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Create event</h1>
         <p className="mt-1 text-muted-foreground">
           Start with the basics — you can reuse this setup for future events.
         </p>
       </div>
 
       {saved ? (
-        <div className="rounded-2xl border border-border bg-card p-10 text-center">
-          <p className="text-4xl">🎉</p>
-          <h2 className="mt-3 text-xl font-semibold">Draft preview created</h2>
+        <div className="rounded-2xl border border-border bg-card p-10 text-center shadow-card">
+          <CheckCircleIcon className="mx-auto h-11 w-11 text-emerald-600" />
+          <h2 className="mt-3 text-xl font-semibold tracking-tight">Draft preview created</h2>
           <p className="mx-auto mt-2 max-w-md text-muted-foreground">
             This is a frontend preview — nothing was saved. Real event creation
             with Supabase arrives in Phase 3.
@@ -48,13 +50,13 @@ export default function NewEventPage() {
           <div className="mt-6 flex justify-center gap-3">
             <Link
               href="/dashboard/events"
-              className="rounded-lg bg-primary px-5 py-2.5 font-medium text-primary-foreground hover:opacity-90"
+              className="rounded-xl bg-primary px-5 py-2.5 font-medium text-primary-foreground shadow-sm transition hover:bg-primary-hover"
             >
               View events
             </Link>
             <button
               onClick={() => setSaved(false)}
-              className="rounded-lg border border-border bg-card px-5 py-2.5 font-medium hover:bg-muted"
+              className="rounded-xl border border-border bg-card px-5 py-2.5 font-medium shadow-sm transition hover:bg-muted"
             >
               Create another
             </button>
@@ -66,7 +68,7 @@ export default function NewEventPage() {
             e.preventDefault();
             setSaved(true);
           }}
-          className="space-y-6 rounded-2xl border border-border bg-card p-6"
+          className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-card"
         >
           <div>
             <label className={labelClass} htmlFor="title">Event title *</label>
@@ -118,14 +120,14 @@ export default function NewEventPage() {
               <button
                 type="button"
                 onClick={() => setIsFree(true)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium ${isFree ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted"}`}
+                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${isFree ? "bg-primary text-primary-foreground shadow-sm" : "border border-border hover:bg-muted"}`}
               >
                 Free
               </button>
               <button
                 type="button"
                 onClick={() => setIsFree(false)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium ${!isFree ? "bg-primary text-primary-foreground" : "border border-border hover:bg-muted"}`}
+                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${!isFree ? "bg-primary text-primary-foreground shadow-sm" : "border border-border hover:bg-muted"}`}
               >
                 Paid
               </button>
@@ -147,7 +149,7 @@ export default function NewEventPage() {
               {moduleOptions.map((module) => (
                 <label
                   key={module.key}
-                  className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 hover:bg-muted/50"
+                  className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 shadow-sm transition hover:bg-muted/50"
                 >
                   <input
                     type="checkbox"
@@ -167,13 +169,13 @@ export default function NewEventPage() {
           <div className="flex flex-wrap gap-3 border-t border-border pt-5">
             <button
               type="submit"
-              className="rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground hover:opacity-90"
+              className="rounded-xl bg-primary px-6 py-2.5 font-medium text-primary-foreground shadow-sm transition hover:bg-primary-hover"
             >
               Save draft (preview)
             </button>
             <Link
               href="/dashboard/events"
-              className="rounded-lg border border-border px-6 py-2.5 font-medium hover:bg-muted"
+              className="rounded-xl border border-border px-6 py-2.5 font-medium shadow-sm transition hover:bg-muted"
             >
               Cancel
             </Link>

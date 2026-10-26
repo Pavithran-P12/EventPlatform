@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import {
+  CalendarIcon,
+  CheckCircleIcon,
+  GlobeIcon,
+  MapPinIcon,
+} from "@/components/icons";
 import { SiteHeaderView } from "@/components/site-header-view";
 import {
   formatDateRange,
@@ -12,7 +18,7 @@ import {
 } from "@/lib/mock/data";
 
 const inputClass =
-  "w-full rounded-lg border border-border bg-card px-3.5 py-2.5 outline-none focus:border-primary";
+  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/40";
 
 export default function EventDetailClient({ slug }: { slug: string }) {
   const event = mockEvents.find((item) => item.slug === slug);
@@ -61,12 +67,13 @@ export default function EventDetailClient({ slug }: { slug: string }) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeaderView displayName={null} />
-      <div className={`bg-gradient-to-br ${event.gradient}`}>
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-stone-800">
+      <div className={`relative overflow-hidden bg-gradient-to-br ${event.gradient}`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
+          <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-800 shadow-sm">
             {event.category}
           </span>
-          <h1 className="mt-4 max-w-3xl text-3xl font-bold text-white sm:text-5xl">
+          <h1 className="mt-4 max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-5xl">
             {event.title}
           </h1>
           <p className="mt-3 text-white/85">Organised by {event.organization}</p>
@@ -76,13 +83,13 @@ export default function EventDetailClient({ slug }: { slug: string }) {
       <main className="mx-auto grid w-full max-w-7xl flex-1 gap-8 px-4 py-10 sm:px-6 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
           <section>
-            <h2 className="text-xl font-semibold">About this event</h2>
+            <h2 className="text-xl font-semibold tracking-tight">About this event</h2>
             <p className="mt-3 leading-7 text-muted-foreground">{event.description}</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">Schedule</h2>
-            <div className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
+            <h2 className="text-xl font-semibold tracking-tight">Schedule</h2>
+            <div className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card shadow-card">
               {event.schedule.map((item) => (
                 <div key={item.title} className="flex gap-4 p-4">
                   <span className="w-14 shrink-0 font-mono text-sm font-semibold text-primary">
@@ -100,7 +107,7 @@ export default function EventDetailClient({ slug }: { slug: string }) {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold">What&apos;s included</h2>
+            <h2 className="text-xl font-semibold tracking-tight">What&apos;s included</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {event.modules.map((module) => (
                 <span
@@ -114,11 +121,23 @@ export default function EventDetailClient({ slug }: { slug: string }) {
           </section>
         </div>
 
-        <aside className="h-fit rounded-2xl border border-border bg-card p-6 shadow-sm lg:sticky lg:top-24">
-          <div className="space-y-2 text-sm">
-            <p>📅 {formatDateRange(event)}</p>
-            <p>{event.isOnline ? "🌐 Online event" : `📍 ${event.location}`}</p>
-            <p className="text-lg font-bold text-foreground">{formatPrice(event)}</p>
+        <aside className="h-fit rounded-2xl border border-border bg-card p-6 shadow-card lg:sticky lg:top-24">
+          <div className="space-y-2.5 text-sm">
+            <p className="flex items-center gap-2.5">
+              <CalendarIcon className="h-4.5 w-4.5 shrink-0 text-primary/70" />
+              {formatDateRange(event)}
+            </p>
+            <p className="flex items-center gap-2.5">
+              {event.isOnline ? (
+                <GlobeIcon className="h-4.5 w-4.5 shrink-0 text-primary/70" />
+              ) : (
+                <MapPinIcon className="h-4.5 w-4.5 shrink-0 text-primary/70" />
+              )}
+              {event.isOnline ? "Online event" : event.location}
+            </p>
+            <p className="pt-1 text-xl font-bold tracking-tight text-foreground">
+              {formatPrice(event)}
+            </p>
           </div>
 
           {event.capacity !== null && (
@@ -137,9 +156,9 @@ export default function EventDetailClient({ slug }: { slug: string }) {
           )}
 
           {submitted ? (
-            <div className="mt-6 rounded-xl bg-emerald-50 p-4 text-center">
-              <p className="text-2xl">🎉</p>
-              <p className="mt-1 font-semibold text-emerald-800">You&apos;re on the list!</p>
+            <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-center">
+              <CheckCircleIcon className="mx-auto h-9 w-9 text-emerald-600" />
+              <p className="mt-2 font-semibold text-emerald-800">You&apos;re on the list!</p>
               <p className="mt-1 text-sm text-emerald-700">
                 Preview only — no registration was saved. Real registration
                 arrives in Phase 3{event.isFree ? "" : ", payments in Phase 4"}.
@@ -181,7 +200,7 @@ export default function EventDetailClient({ slug }: { slug: string }) {
               <button
                 type="submit"
                 disabled={soldOut}
-                className="w-full rounded-lg bg-primary py-3 font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-primary py-3 font-medium text-primary-foreground shadow-sm transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {soldOut
                   ? "Sold out"
