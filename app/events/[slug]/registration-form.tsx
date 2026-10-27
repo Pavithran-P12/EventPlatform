@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 
 import type { PublicEvent, RegistrationFieldRecord } from "@/lib/db/types";
-import { seatsLeft } from "@/lib/db/helpers";
+import { formatPrice, seatsLeft } from "@/lib/db/helpers";
 import { registerForEventAction } from "@/app/events/actions";
+import {
+  startPaidCheckoutAction,
+  type CheckoutState,
+} from "@/app/events/[slug]/checkout/actions";
 import { CheckCircleIcon } from "@/components/icons";
 
 const inputClass =
@@ -28,15 +32,7 @@ export default function RegistrationForm({
   const soldOut = left === 0;
 
   if (!event.is_free) {
-    return (
-      <div className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-slate-200/70">
-        <h2 className="text-base font-semibold text-slate-900">Paid event</h2>
-        <p className="mt-2 text-sm leading-relaxed text-slate-500">
-          Online payment for this event opens soon via secure PayPal checkout.
-          Registrations are not open yet — please check back shortly.
-        </p>
-      </div>
-    );
+    return <PaidCheckoutForm event={event} soldOut={soldOut} left={left} />;
   }
 
   if (success) {
@@ -135,6 +131,92 @@ export default function RegistrationForm({
       </button>
       <p className="mt-3 text-center text-xs text-slate-400">
         Guest registration — no account needed. One registration per email.
+      </p>
+    </form>
+  );
+}
+
+function PaidCheckoutForm({
+  event,
+  soldOut,
+  left,
+}: {
+  event: PublicEvent;
+  soldOut: boolean;
+  left: number | null;
+}) {
+  const action = startPaidCheckoutAction.bind(null, event.slug);
+  const [state, formAction, pending] = useActionState<CheckoutState, FormData>(
+    action,
+    { error: null },
+  );
+
+  return (
+    <form
+      action={formAction}
+      className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-slate-200/70"
+      aria-label={`Register and pay for ${event.title}`}
+    >
+      <h2 className="text-base font-semibold text-slate-900">
+        Register &amp; pay
+      </h2>
+      <p className="mt-1 text-sm text-slate-500">
+        {soldOut
+          ? "This event is fully booked."
+          : left !== null
+            ? `${left} of ${event.capacity} seats remaining.`
+            : "Secure checkout via PayPal."}
+      </p>
+      <p className="mt-3 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100">
+        <span className="text-sm text-slate-500">Ticket price</span>
+        <span className="text-base font-bold text-slate-900">
+          {formatPrice(event)}
+        </span>
+      </p>
+
+      {state.error ? (
+        <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
+          {state.error}
+        </p>
+      ) : null}
+
+      <div className="mt-4 space-y-4">
+        <div>
+          <label htmlFor="pay-name" className="text-sm font-medium text-slate-700">Full name</label>
+          <input id="pay-name" name="fullName" autoComplete="name" required
+            placeholder="Your full name" disabled={soldOut}
+            className={`${inputClass} disabled:bg-slate-50`} />
+        </div>
+        <div>
+          <label htmlFor="pay-email" className="text-sm font-medium text-slate-700">Email</label>
+          <input id="pay-email" name="email" type="email" autoComplete="email" required
+            placeholder="you@example.com" disabled={soldOut}
+            className={`${inputClass} disabled:bg-slate-50`} />
+        </div>
+        <div>
+          <label htmlFor="pay-phone" className="text-sm font-medium text-slate-700">
+            Phone <span className="font-normal text-slate-400">(optional)</span>
+          </label>
+          <input id="pay-phone" name="phone" type="tel" autoComplete="tel"
+            placeholder="+91 …" disabled={soldOut}
+            className={`${inputClass} disabled:bg-slate-50`} />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={soldOut || pending}
+        className="mt-5 w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+      >
+        {soldOut
+          ? "Sold out"
+          : pending
+            ? "Redirecting to PayPal…"
+            : `Pay ${formatPrice(event)} with PayPal`}
+      </button>
+      <p className="mt-3 text-center text-xs text-slate-400">
+        You will be redirected to PayPal to complete payment. Your seat is
+        confirmed only after PayPal verifies the payment.
       </p>
     </form>
   );

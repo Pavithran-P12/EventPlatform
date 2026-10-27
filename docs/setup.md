@@ -94,20 +94,47 @@ npx supabase db reset
    `https://p12vizha.vercel.app/auth/callback` (already added).
 4. PayPal webhook URL (Phase 4): `https://p12vizha.vercel.app/api/webhooks/paypal`.
 
+## Phase 4: PayPal checkout + webhooks (one-time setup)
+
+1. Apply the payments migration in the Supabase SQL Editor:
+   `supabase/migrations/20261027000003_payments.sql` (adds `orders`,
+   `payments`, `payment_webhook_events`, and `register_for_paid_event()`).
+2. Make sure `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` **and** Vercel
+   is the real key starting with `sb_secret_` (Project Settings → API).
+   The webhook and order services use it server-side only.
+3. Register the webhook in the PayPal developer dashboard:
+   Apps & Credentials → Sandbox → your app → Webhooks → Add webhook:
+   - URL: `https://p12vizha.vercel.app/api/webhooks/paypal`
+   - Events: `CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`,
+     `PAYMENT.CAPTURE.DENIED`, `PAYMENT.CAPTURE.REFUNDED`
+4. Copy the generated Webhook ID into `PAYPAL_WEBHOOK_ID` in `.env.local`
+   **and** separately in Vercel env vars, then redeploy.
+5. Test with a sandbox buyer account: create + publish a paid event,
+   register, approve payment on PayPal, and confirm the registration
+   shows as confirmed/paid in the dashboard participants list.
+
+Note: events are priced in INR. If the sandbox business account cannot
+accept INR, PayPal will reject order creation — switch the sandbox
+account country/currency or test with a USD-priced event.
+
 ## Current status / blockers
 
 - Supabase project: created (`unvhxnyydbimszvheqif`); foundation
   migration applied and verified (tables + RPC live).
-- Phase 3 migration (`20261027000002_registration.sql`): adds event
-  modules, registration forms/fields, registrations/answers, and the
-  atomic `register_for_free_event()` RPC. Apply it in the SQL Editor the
-  same way as the foundation migration, then verify the new tables
-  return HTTP 200.
+- Phase 3 migration (`20261027000002_registration.sql`): applied and
+  verified live (event modules, registration forms/fields,
+  registrations/answers, atomic `register_for_free_event()` RPC).
+- Phase 4 migration (`20261027000003_payments.sql`): **apply in the SQL
+  Editor** (see Phase 4 setup above), then register the PayPal webhook
+  to obtain `PAYPAL_WEBHOOK_ID`.
 - Google OAuth: enabled in Supabase; local login verified end-to-end
   (Google sign-in → `/auth/callback` → `/dashboard`).
 - Vercel: deployed at `https://p12vizha.vercel.app`; env vars are set
   via the Vercel–Supabase connection. `NEXT_PUBLIC_APP_URL` must be set
   explicitly in Vercel (see Deployment above).
-- PayPal sandbox credentials: verified working (Phase 4 checkout).
+- PayPal sandbox credentials: verified working. Checkout, capture,
+  verified idempotent webhooks, refunds, and dashboard payment status
+  are implemented; the live sandbox purchase flow still needs the
+  migration + webhook steps above before it can be tested end-to-end.
 - Tenant-isolation / RLS integration tests will be added with the
   features they protect (Phases 3–5), per the incremental plan.

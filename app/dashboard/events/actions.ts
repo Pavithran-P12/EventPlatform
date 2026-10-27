@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getActiveOrganization } from "@/lib/db/org-context";
 import { getEventForOrg } from "@/lib/db/queries";
 import { slugify, uniqueSlug } from "@/lib/db/helpers";
 import { eventFormSchema, type EventFormInput } from "@/lib/validation/phase3";
+import { refundPayPalCapture } from "@/lib/payments/paypal";
 
 export type ActionState = { error?: string; success?: string };
 
@@ -190,6 +192,62 @@ export async function cancelRegistrationAction(formData: FormData) {
     .update({ status: "cancelled" })
     .eq("id", registrationId)
     .eq("event_id", eventId);
+  revalidatePath(`/dashboard/events/${eventId}/participants`);
+  revalidatePath("/events");
+  revalidatePath(`/events/${existing.slug}`);
+}
+
+export async function refundRegistrationAction(formData: FormData) {
+  const { organization } = await requireActiveOrg();
+  const registrationId = String(formData.get("registrationId") ?? "");
+  const eventId = String(formData.get("eventId") ?? "");
+  const existing = await getEventForOrg(organization.id, eventId);
+  if (!existing) return;
+
+  const admin = createAdminClient();
+  const { data: order } = await admin
+    .from("orders")
+    .select("id, status, amount_cents, currency")
+    .eq("registration_id", registrationId)
+    .eq("organization_id", organization.id)
+    .maybeSingle();
+  if (!order || (order as { status: string }).status !== "paid") return;
+  const orderRow = order as {
+    id: string;
+    amount_cents: number;
+    currency: string;
+  };
+  const { data: payment } = await admin
+    .from("payments")
+    .select("provider_capture_id")
+    .eq("order_id", orderRow.id)
+    .eq("status", "captured")
+    .maybeSingle();
+  const captureId = (payment as { provider_capture_id: string | null } | null)
+    ?.provider_capture_id;
+  if (!captureId) return;
+
+  try {
+    await refundPayPalCapture(captureId, orderRow.amount_cents, orderRow.currency);
+  } catch {
+    return;
+  }
+  // The PAYMENT.CAPTURE.REFUNDED webhook performs the authoritative state
+  // transition; update immediately as well so the dashboard reflects it.
+  await admin
+    .from("orders")
+    .update({ status: "refunded" })
+    .eq("id", orderRow.id)
+    .eq("status", "paid");
+  await admin
+    .from("payments")
+    .update({ status: "refunded" })
+    .eq("order_id", orderRow.id);
+  await admin
+    .from("registrations")
+    .update({ status: "cancelled" })
+    .eq("id", registrationId)
+    .eq("status", "confirmed");
   revalidatePath(`/dashboard/events/${eventId}/participants`);
   revalidatePath("/events");
   revalidatePath(`/events/${existing.slug}`);
