@@ -49,6 +49,16 @@ describe("environment validation", () => {
     ).toBe("sandbox");
   });
 
+  it("accepts the publishable key name as the anon key", () => {
+    const env = getPublicEnv({
+      NODE_ENV: "test",
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "publishable-key",
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+    });
+    expect(env.NEXT_PUBLIC_SUPABASE_ANON_KEY).toBe("publishable-key");
+  });
+
   it("reports unconfigured Supabase without throwing", () => {
     expect(isSupabaseConfigured({} as NodeJS.ProcessEnv)).toBe(false);
     expect(isSupabaseConfigured(validPublic)).toBe(true);

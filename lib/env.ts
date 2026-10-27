@@ -23,15 +23,24 @@ function formatIssues(error: z.ZodError): string {
     .join("; ");
 }
 
-export function getPublicEnv(source?: NodeJS.ProcessEnv): PublicEnv {
+// Supabase renamed the anon key to "publishable key"; accept either env var
+// name so local and production settings can use whichever name was copied.
+function resolveAnonKey(source?: NodeJS.ProcessEnv): string | undefined {
   // Literal process.env.NEXT_PUBLIC_* references are required so Next.js
   // can inline them into the browser bundle.
+  return (
+    source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    source?.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
+export function getPublicEnv(source?: NodeJS.ProcessEnv): PublicEnv {
   const result = publicEnvSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL:
       source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: resolveAnonKey(source),
     NEXT_PUBLIC_APP_URL:
       source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
   });
@@ -46,9 +55,7 @@ export function getServerEnv(source?: NodeJS.ProcessEnv): ServerEnv {
   const result = serverEnvSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL:
       source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: resolveAnonKey(source),
     NEXT_PUBLIC_APP_URL:
       source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
     SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
@@ -67,9 +74,7 @@ export function isSupabaseConfigured(source?: NodeJS.ProcessEnv): boolean {
   return publicEnvSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL:
       source?.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      source?.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: resolveAnonKey(source),
     NEXT_PUBLIC_APP_URL:
       source?.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
   }).success;

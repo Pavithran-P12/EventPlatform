@@ -28,7 +28,7 @@ explicitly in Vercel so production links use the real origin.
 | Variable | Where to get it | Exposure |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase dashboard → Project Settings → API → Project URL | Browser-safe |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same page → anon / publishable key | Browser-safe, RLS still applies |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same page → anon / publishable key (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` also accepted) | Browser-safe, RLS still applies |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same page → service_role key | **Server-only. Bypasses RLS.** |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` locally; production origin on Vercel | Browser-safe |
 | `PAYPAL_ENV` | `sandbox` until go-live | Server |
