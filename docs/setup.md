@@ -249,3 +249,16 @@ and dashboard navigation shows skeleton loaders while data loads.
   EXECUTE granted by Supabase defaults) are applied and verified.
   Refund path is implemented; run the refund verification above once
   per environment.
+- Signed-in dashboard crash (fixed 2026-10-31, commit `1abe0e7`): the
+  dashboard layout passed an `Icon` component (a function) into the
+  client `NavLink`, which React cannot serialize across the
+  server/client boundary — signed-in users got a server error page on
+  every dashboard route while anonymous visitors redirected to
+  `/login` first, hiding the bug from outside checks. `NavLink` now
+  takes a rendered icon node. The dashboard overview also awaits
+  `connection()` before comparing event dates to now, clearing the
+  `Date.now()` prerender errors under Cache Components. Verified
+  signed-in (with and without an organisation) against a local
+  production build. Lesson: never pass component types or other
+  functions as props from a Server Component to a Client Component —
+  pass rendered nodes or serializable keys instead.
