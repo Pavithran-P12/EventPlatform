@@ -124,17 +124,22 @@ account country/currency or test with a USD-priced event.
 - Phase 3 migration (`20261027000002_registration.sql`): applied and
   verified live (event modules, registration forms/fields,
   registrations/answers, atomic `register_for_free_event()` RPC).
-- Phase 4 migration (`20261027000003_payments.sql`): **apply in the SQL
-  Editor** (see Phase 4 setup above), then register the PayPal webhook
-  to obtain `PAYPAL_WEBHOOK_ID`.
+- Phase 4 migration (`20261027000003_payments.sql`): applied and
+  verified live (orders, payments, webhook events, paid-registration
+  RPC). PayPal webhook registered; `PAYPAL_WEBHOOK_ID` set locally.
 - Google OAuth: enabled in Supabase; local login verified end-to-end
   (Google sign-in → `/auth/callback` → `/dashboard`).
 - Vercel: deployed at `https://p12vizha.vercel.app`; env vars are set
   via the Vercel–Supabase connection. `NEXT_PUBLIC_APP_URL` must be set
   explicitly in Vercel (see Deployment above).
-- PayPal sandbox credentials: verified working. Checkout, capture,
-  verified idempotent webhooks, refunds, and dashboard payment status
-  are implemented; the live sandbox purchase flow still needs the
-  migration + webhook steps above before it can be tested end-to-end.
+- PayPal sandbox: **verified end-to-end locally** (2026-10-31) —
+  checkout → buyer approval → capture → order `paid`, payment
+  `captured`, registration `confirmed`, and both webhooks
+  (`CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`) received
+  and processed. Sandbox notes: the seller account rejects INR
+  (`CURRENCY_NOT_SUPPORTED`) and India buyers cannot pay India
+  sellers (PayPal India domestic rule) — test with a USD event and a
+  US sandbox buyer. Production still needs the PayPal env vars +
+  `PAYPAL_WEBHOOK_ID` set in Vercel with a redeploy.
 - Tenant-isolation / RLS integration tests will be added with the
   features they protect (Phases 3–5), per the incremental plan.
