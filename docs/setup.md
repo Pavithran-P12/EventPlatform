@@ -262,3 +262,16 @@ and dashboard navigation shows skeleton loaders while data loads.
   production build. Lesson: never pass component types or other
   functions as props from a Server Component to a Client Component —
   pass rendered nodes or serializable keys instead.
+- Dashboard navigation speed (2026-10-31, commits `723cd53`,
+  `0a08d52`): signed-in pages measured 2–4.7s per click. Two causes
+  fixed: (1) the organisation membership list was fetched 2–3 times
+  per navigation — `getMyOrganizations` is now wrapped in React
+  `cache()` and the layout resolves the active organisation from its
+  already-fetched list (`resolveActiveOrganization`); the event
+  manage page also fetches modules and counts in parallel.
+  (2) Dynamic pages had a 0s client-cache stale time, so every click
+  re-downloaded the full page — `experimental.staleTimes.dynamic`
+  is now 30s in `next.config.ts`, making repeat navigation instant
+  while `revalidatePath` in Server Actions keeps post-mutation views
+  fresh. Server response time (TTFB) is ~0.6s; the remaining wait on
+  a first visit to a page is network distance to Vercel/Supabase.
