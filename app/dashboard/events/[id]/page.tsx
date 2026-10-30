@@ -43,8 +43,10 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const event = await getEventForOrg(active.organization.id, id);
   if (!event) notFound();
 
-  const modules = await getEventModules(event.id);
-  const counts = await getRegistrationCounts([event.id]);
+  const [modules, counts] = await Promise.all([
+    getEventModules(event.id),
+    getRegistrationCounts([event.id]),
+  ]);
   const registered = counts.get(event.id) ?? 0;
 
   const initial: EventFormValues = {

@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import type {
@@ -19,7 +21,9 @@ type MembershipRow = {
   organizations: Organization | null;
 };
 
-export async function getMyOrganizations(
+// Cached per request: the dashboard layout and the page both need the
+// membership list, and React cache() dedupes it to one Supabase round-trip.
+export const getMyOrganizations = cache(async function getMyOrganizations(
   userId: string,
 ): Promise<OrganizationMembership[]> {
   if (!isSupabaseConfigured()) return [];
@@ -38,7 +42,7 @@ export async function getMyOrganizations(
       role: row.role,
       organization: row.organizations as Organization,
     }));
-}
+});
 
 export async function getOrganizationForUser(
   userId: string,

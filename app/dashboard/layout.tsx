@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense, type ComponentType } from "react";
 
 import { getCurrentUser } from "@/lib/auth";
-import { getActiveOrganization, setActiveOrganizationCookie } from "@/lib/db/org-context";
+import { resolveActiveOrganization, setActiveOrganizationCookie } from "@/lib/db/org-context";
 import { getMyOrganizations } from "@/lib/db/queries";
 import { SignOutButton } from "@/components/sign-out-button";
 import NavLink from "@/components/nav-link";
@@ -35,7 +35,7 @@ async function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   const memberships = await getMyOrganizations(user.id);
-  const active = await getActiveOrganization(user.id);
+  const active = await resolveActiveOrganization(memberships);
 
   const displayName =
     (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "Organiser";
