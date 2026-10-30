@@ -174,6 +174,11 @@ attendee emails work in production.
 
 ### Refund verification (do once per environment)
 
+Status: verified by the organiser in production on 2026-10-31.
+Destructive dashboard actions (refund, cancel registration, cancel
+event, delete draft) now ask for confirmation in a dialog first,
+and dashboard navigation shows skeleton loaders while data loads.
+
 1. Complete a sandbox purchase so a registration is `confirmed`.
 2. Dashboard → event → Participants → **Refund**.
 3. Expected: order `refunded`, payment `refunded`, registration

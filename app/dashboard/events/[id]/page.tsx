@@ -18,6 +18,8 @@ import {
 } from "@/app/dashboard/events/actions";
 import EditEventForm from "@/app/dashboard/events/[id]/edit-event-form";
 import type { EventFormValues } from "@/app/dashboard/events/event-form";
+import ConfirmAction from "@/components/confirm-action";
+import PageSkeleton from "@/components/page-skeleton";
 
 function toLocalInput(iso: string): string {
   const date = new Date(iso);
@@ -107,20 +109,26 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           Participants ({registered})
         </Link>
         {event.status !== "cancelled" ? (
-          <form action={cancelEventAction}>
-            <input type="hidden" name="eventId" value={event.id} />
-            <button type="submit" className={`${buttonClass} bg-white text-red-600 ring-red-200 hover:bg-red-50`}>
-              Cancel event
-            </button>
-          </form>
+          <ConfirmAction
+            action={cancelEventAction}
+            fields={{ eventId: event.id }}
+            triggerLabel="Cancel event"
+            triggerClassName={`${buttonClass} bg-white text-red-600 ring-red-200 hover:bg-red-50`}
+            title="Cancel this event?"
+            description={`"${event.title}" will be marked cancelled and removed from public listings. Existing registrations stay on record. This cannot be undone.`}
+            confirmLabel="Cancel event"
+          />
         ) : null}
         {event.status === "draft" ? (
-          <form action={deleteEventAction}>
-            <input type="hidden" name="eventId" value={event.id} />
-            <button type="submit" className={`${buttonClass} bg-white text-red-600 ring-red-200 hover:bg-red-50`}>
-              Delete draft
-            </button>
-          </form>
+          <ConfirmAction
+            action={deleteEventAction}
+            fields={{ eventId: event.id }}
+            triggerLabel="Delete draft"
+            triggerClassName={`${buttonClass} bg-white text-red-600 ring-red-200 hover:bg-red-50`}
+            title="Delete this draft?"
+            description={`"${event.title}" and its setup will be permanently deleted. This cannot be undone.`}
+            confirmLabel="Delete draft"
+          />
         ) : null}
       </div>
 
@@ -140,7 +148,13 @@ export default function EventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="text-sm text-slate-500">Loading event…</p>}>
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-3xl">
+          <PageSkeleton rows={3} />
+        </div>
+      }
+    >
       <EventDetail params={params} />
     </Suspense>
   );

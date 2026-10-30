@@ -11,6 +11,8 @@ import {
   cancelRegistrationAction,
   refundRegistrationAction,
 } from "@/app/dashboard/events/actions";
+import ConfirmAction from "@/components/confirm-action";
+import PageSkeleton from "@/components/page-skeleton";
 
 const STATUS_STYLES: Record<string, string> = {
   confirmed: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
@@ -129,21 +131,26 @@ async function Participants({ params }: { params: Promise<{ id: string }> }) {
                     </td>
                     <td className="px-5 py-3.5">
                       {registration.order_status === "paid" ? (
-                        <form action={refundRegistrationAction}>
-                          <input type="hidden" name="registrationId" value={registration.registration_id} />
-                          <input type="hidden" name="eventId" value={event.id} />
-                          <button type="submit" className="text-sm font-medium text-violet-600 hover:text-violet-700">
-                            Refund
-                          </button>
-                        </form>
+                        <ConfirmAction
+                          action={refundRegistrationAction}
+                          fields={{ registrationId: registration.registration_id, eventId: event.id }}
+                          triggerLabel="Refund"
+                          triggerClassName="text-sm font-medium text-violet-600 hover:text-violet-700"
+                          title="Refund this payment?"
+                          description={`The full amount will be returned to ${registration.full_name} (${registration.email}) via PayPal, and their registration will be cancelled. This cannot be undone.`}
+                          confirmLabel="Refund payment"
+                          confirmClassName="bg-violet-600 text-white hover:bg-violet-700"
+                        />
                       ) : registration.registration_status !== "cancelled" ? (
-                        <form action={cancelRegistrationAction}>
-                          <input type="hidden" name="registrationId" value={registration.registration_id} />
-                          <input type="hidden" name="eventId" value={event.id} />
-                          <button type="submit" className="text-sm font-medium text-red-600 hover:text-red-700">
-                            Cancel
-                          </button>
-                        </form>
+                        <ConfirmAction
+                          action={cancelRegistrationAction}
+                          fields={{ registrationId: registration.registration_id, eventId: event.id }}
+                          triggerLabel="Cancel"
+                          triggerClassName="text-sm font-medium text-red-600 hover:text-red-700"
+                          title="Cancel this registration?"
+                          description={`${registration.full_name} (${registration.email}) will lose their seat, which becomes available to others. This cannot be undone.`}
+                          confirmLabel="Cancel registration"
+                        />
                       ) : (
                         <span className="text-xs text-slate-400">—</span>
                       )}
@@ -166,7 +173,7 @@ export default function ParticipantsPage({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="text-sm text-slate-500">Loading participants…</p>}>
+    <Suspense fallback={<PageSkeleton rows={6} />}>
       <Participants params={params} />
     </Suspense>
   );
