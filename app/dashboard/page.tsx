@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 
 import { getCurrentUser } from "@/lib/auth";
@@ -21,6 +22,7 @@ import {
 const statIcons = [CalendarIcon, UsersIcon, CardIcon, CheckCircleIcon];
 
 async function Overview() {
+  await connection();
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const active = await getActiveOrganization(user.id);

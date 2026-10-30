@@ -115,7 +115,12 @@ async function DashboardShell({ children }: { children: React.ReactNode }) {
 
         <nav aria-label="Dashboard" className="flex gap-1 overflow-x-auto px-3 pb-4 lg:flex-col lg:overflow-visible">
           {nav.map(({ href, label, Icon }) => (
-            <NavLink key={href} href={href} label={label} Icon={Icon} />
+            <NavLink
+              key={href}
+              href={href}
+              label={label}
+              icon={<Icon className="h-4.5 w-4.5 text-slate-400" />}
+            />
           ))}
         </nav>
 
