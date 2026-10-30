@@ -132,14 +132,17 @@ account country/currency or test with a USD-priced event.
 - Vercel: deployed at `https://p12vizha.vercel.app`; env vars are set
   via the Vercel–Supabase connection. `NEXT_PUBLIC_APP_URL` must be set
   explicitly in Vercel (see Deployment above).
-- PayPal sandbox: **verified end-to-end locally** (2026-10-31) —
-  checkout → buyer approval → capture → order `paid`, payment
-  `captured`, registration `confirmed`, and both webhooks
+- PayPal sandbox: **verified end-to-end locally and in production**
+  (2026-10-31) — checkout → buyer approval → capture → order `paid`,
+  payment `captured`, registration `confirmed`, and both webhooks
   (`CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`) received
-  and processed. Sandbox notes: the seller account rejects INR
-  (`CURRENCY_NOT_SUPPORTED`) and India buyers cannot pay India
-  sellers (PayPal India domestic rule) — test with a USD event and a
-  US sandbox buyer. Production still needs the PayPal env vars +
-  `PAYPAL_WEBHOOK_ID` set in Vercel with a redeploy.
+  and processed in both environments. Sandbox notes: the seller
+  account rejects INR (`CURRENCY_NOT_SUPPORTED`) and India buyers
+  cannot pay India sellers (PayPal India domestic rule) — test with
+  a USD event and a US sandbox buyer.
+- Public seat counts: registrations have no anon read policy
+  (attendee privacy), so public pages get counts from the
+  counts-only `get_public_registration_counts()` RPC (migration
+  `20261027000004_public_counts.sql`, applied and verified live).
 - Tenant-isolation / RLS integration tests will be added with the
   features they protect (Phases 3–5), per the incremental plan.
