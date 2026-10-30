@@ -32,6 +32,8 @@ describe("database security invariants", () => {
     expect(sql).toContain("status = 'pending_payment'");
     expect(sql).toContain("revoke all on function public.expire_stale_pending_payments");
     expect(sql).not.toContain("status = 'paid'");
+    const lockdown = migration("20261027000006_expiry_access.sql");
+    expect(lockdown).toContain("from anon, authenticated");
   });
 
   it("enforces paid registration capacity and duplicates in the database", () => {
