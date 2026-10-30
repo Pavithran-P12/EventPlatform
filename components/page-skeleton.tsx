@@ -1,7 +1,13 @@
+import Spinner from "@/components/spinner";
+
 export default function PageSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <div className="animate-pulse" role="status" aria-label="Loading">
-      <div className="h-7 w-48 rounded-lg bg-slate-200" />
+      <div className="flex items-center gap-3">
+        <Spinner className="h-6 w-6" />
+        <span className="text-sm font-medium text-slate-500">Loading…</span>
+      </div>
+      <div className="mt-5 h-7 w-48 rounded-lg bg-slate-200" />
       <div className="mt-2 h-4 w-72 max-w-full rounded bg-slate-200/70" />
       <div className="mt-6 space-y-3">
         {Array.from({ length: rows }).map((_, index) => (

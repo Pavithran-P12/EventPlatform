@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getActiveOrganization, setActiveOrganizationCookie } from "@/lib/db/org-context";
 import { getMyOrganizations } from "@/lib/db/queries";
 import { SignOutButton } from "@/components/sign-out-button";
+import NavLink from "@/components/nav-link";
 import {
   CalendarIcon,
   HomeIcon,
@@ -114,14 +115,7 @@ async function DashboardShell({ children }: { children: React.ReactNode }) {
 
         <nav aria-label="Dashboard" className="flex gap-1 overflow-x-auto px-3 pb-4 lg:flex-col lg:overflow-visible">
           {nav.map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              <Icon className="h-4.5 w-4.5 text-slate-400" />
-              {label}
-            </Link>
+            <NavLink key={href} href={href} label={label} Icon={Icon} />
           ))}
         </nav>
 
