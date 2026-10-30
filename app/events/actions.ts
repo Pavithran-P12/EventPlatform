@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getCurrentUser } from "@/lib/auth";
+import { sendRegistrationConfirmation } from "@/lib/email/send";
 import { createClient } from "@/lib/supabase/server";
 import {
   parseRegistrationError,
@@ -39,6 +40,7 @@ export async function registerForEventAction(
     return { error: REGISTRATION_ERROR_MESSAGES[code] };
   }
   const registration = data as { id: string };
+  await sendRegistrationConfirmation(registration.id);
   revalidatePath(`/events/${slug}`);
   revalidatePath("/events");
   return {

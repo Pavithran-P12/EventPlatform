@@ -149,6 +149,23 @@ or manually in the SQL Editor:
 select public.expire_stale_pending_payments();
 ```
 
+### Confirmation emails (Resend)
+
+Registration confirmations are sent server-side when a registration
+becomes `confirmed` (free registration, or verified PayPal capture —
+including when the payer's PayPal email differs from the registration
+email; the email always goes to the registration email). Sends are
+idempotent via `registrations.confirmation_email_sent_at`
+(migration 7).
+
+1. Apply migration `20261027000007_confirmation_email.sql`.
+2. Add `RESEND_API_KEY` to `.env.local` and Vercel (Production), then
+   redeploy. Leave blank to disable emails entirely.
+3. `EMAIL_FROM` is optional. Default is Resend's test sender
+   (`onboarding@resend.dev`), which can **only** deliver to your own
+   Resend account email. To email attendees, verify a domain in
+   Resend and set e.g. `EMAIL_FROM=EventPlatform <tickets@yourdomain>`.
+
 ### Refund verification (do once per environment)
 
 1. Complete a sandbox purchase so a registration is `confirmed`.

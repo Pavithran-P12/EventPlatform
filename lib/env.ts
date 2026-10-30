@@ -12,6 +12,8 @@ const serverEnvSchema = publicEnvSchema.extend({
   PAYPAL_CLIENT_ID: z.string().optional(),
   PAYPAL_CLIENT_SECRET: z.string().optional(),
   PAYPAL_WEBHOOK_ID: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -63,6 +65,8 @@ export function getServerEnv(source?: NodeJS.ProcessEnv): ServerEnv {
     PAYPAL_CLIENT_ID: env.PAYPAL_CLIENT_ID || undefined,
     PAYPAL_CLIENT_SECRET: env.PAYPAL_CLIENT_SECRET || undefined,
     PAYPAL_WEBHOOK_ID: env.PAYPAL_WEBHOOK_ID || undefined,
+    RESEND_API_KEY: env.RESEND_API_KEY || undefined,
+    EMAIL_FROM: env.EMAIL_FROM || undefined,
   });
   if (!result.success) {
     throw new Error(`Invalid server environment: ${formatIssues(result.error)}`);

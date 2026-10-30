@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendRegistrationConfirmation } from "@/lib/email/send";
 import { extractCaptureFacts } from "@/lib/payments/helpers";
 import type { OrderRecord, PaymentRecord } from "@/lib/payments/types";
 
@@ -156,6 +157,7 @@ export async function applyVerifiedPayment(input: {
       .update({ status: "confirmed" })
       .eq("id", order.registration_id)
       .eq("status", "pending_payment");
+    await sendRegistrationConfirmation(order.registration_id);
     return "paid";
   }
   const current = await getOrderById(order.id);
