@@ -166,10 +166,11 @@ idempotent via `registrations.confirmation_email_sent_at`
    Resend account email. To email attendees, verify a domain in
    Resend and set e.g. `EMAIL_FROM=EventPlatform <tickets@yourdomain>`.
 
-Verified locally 2026-10-31: free registration triggered a
-confirmation send accepted by Resend, with
-`confirmation_email_sent_at` recorded on the registration. For
-production, add `RESEND_API_KEY` in Vercel and redeploy.
+Verified locally and in production 2026-10-31: free registrations
+triggered confirmation sends accepted by Resend, with
+`confirmation_email_sent_at` recorded on the registrations. The
+Resend key is set in Vercel and a sending domain is verified, so
+attendee emails work in production.
 
 ### Refund verification (do once per environment)
 
