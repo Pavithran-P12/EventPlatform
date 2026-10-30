@@ -215,8 +215,9 @@ select public.expire_stale_pending_payments();
   `20261027000004_public_counts.sql`, applied and verified live).
 - Phase 5: unit tests cover env validation, money/payment helpers,
   and migration security invariants (36 tests). Supabase boundary
-  integration tests are opt-in via `npm run test:integration`.
-  Migration `20261027000005_payment_expiry.sql` (stale pending-payment
-  cleanup) is written and must be applied in the SQL Editor.
+  integration tests are opt-in via `npm run test:integration` and
+  pass live (4/4). Migrations 5 (stale pending-payment expiry) and 6
+  (expiry locked to service role — the boundary test caught anonymous
+  EXECUTE granted by Supabase defaults) are applied and verified.
   Refund path is implemented; run the refund verification above once
   per environment.
