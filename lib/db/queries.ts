@@ -111,6 +111,25 @@ export async function getRegistrationCounts(
   return counts;
 }
 
+// Counts-only RPC for public pages: registrations have no anon read policy
+// (attendee privacy), so public seat counts must come from this aggregate.
+export async function getPublicRegistrationCounts(
+  eventIds: string[],
+): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (!isSupabaseConfigured() || eventIds.length === 0) return counts;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "get_public_registration_counts",
+    { target_event_ids: eventIds },
+  );
+  if (error || !data) return counts;
+  for (const row of data as { event_id: string; registered_count: number }[]) {
+    counts.set(row.event_id, Number(row.registered_count));
+  }
+  return counts;
+}
+
 export async function getEventRegistrations(
   eventId: string,
 ): Promise<RegistrationRecord[]> {
@@ -140,7 +159,7 @@ export async function getPublicEvents(): Promise<PublicEvent[]> {
   const events = data as unknown as (EventRecord & {
     organizations: { name: string } | { name: string }[] | null;
   })[];
-  const counts = await getRegistrationCounts(events.map((e) => e.id));
+  const counts = await getPublicRegistrationCounts(events.map((e) => e.id));
   return events.map((event) => ({
     ...event,
     organization_name:
@@ -167,7 +186,7 @@ export async function getPublicEventBySlug(
   const event = data as unknown as EventRecord & {
     organizations: { name: string } | { name: string }[] | null;
   };
-  const counts = await getRegistrationCounts([event.id]);
+  const counts = await getPublicRegistrationCounts([event.id]);
   return {
     ...event,
     organization_name:
