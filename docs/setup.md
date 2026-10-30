@@ -117,6 +117,75 @@ Note: events are priced in INR. If the sandbox business account cannot
 accept INR, PayPal will reject order creation — switch the sandbox
 account country/currency or test with a USD-priced event.
 
+## Phase 5: production readiness
+
+### Test commands
+
+```bash
+npm run lint
+npm run typecheck
+npm test                  # unit tests (no live services needed)
+npm run test:integration  # Supabase boundary tests; needs .env.local
+npm run build
+```
+
+Integration tests are opt-in (`RUN_INTEGRATION_TESTS=1` is set by the
+`test:integration` script environment in CI; locally the script reads
+`.env.local` via `tests/setup-env.ts`). They verify anonymous visitors
+cannot read registrations or webhook events, public counts are
+aggregate-only, and payment expiry is service-role only.
+
+### Abandoned checkout cleanup
+
+Migration `20261027000005_payment_expiry.sql` adds
+`expire_stale_pending_payments()` (service-role only). It cancels
+`pending` orders older than 30 minutes and releases their
+`pending_payment` seats. It never touches paid/confirmed records.
+Call it from trusted server-side maintenance (for example a scheduled
+job) via `expireStalePendingPayments()` in `lib/payments/orders.ts`,
+or manually in the SQL Editor:
+
+```sql
+select public.expire_stale_pending_payments();
+```
+
+### Refund verification (do once per environment)
+
+1. Complete a sandbox purchase so a registration is `confirmed`.
+2. Dashboard → event → Participants → **Refund**.
+3. Expected: order `refunded`, payment `refunded`, registration
+   `cancelled`, seat released, and a `PAYMENT.CAPTURE.REFUNDED`
+   webhook recorded (duplicate deliveries are ignored safely).
+
+### PayPal go-live checklist (no code changes)
+
+1. PayPal developer dashboard → Apps & Credentials → **Live** → create
+   or open the live app (verified live business account required).
+2. Register the webhook under the **Live** app:
+   `https://p12vizha.vercel.app/api/webhooks/paypal` with the same four
+   events; copy the new Webhook ID.
+3. Update four values in `.env.local` **and** Vercel (Production), then
+   redeploy: `PAYPAL_ENV=live`, live `PAYPAL_CLIENT_ID`, live
+   `PAYPAL_CLIENT_SECRET`, live `PAYPAL_WEBHOOK_ID`.
+4. Test with a small real payment from a **different** PayPal account
+   (PayPal blocks self-payments), then refund it from the dashboard.
+5. India note: PayPal India live accounts support international
+   payments only; confirm INR/domestic support before pricing events
+   in ₹ for Indian buyers.
+
+### Production checklist
+
+- [ ] All migrations applied (foundation, registration, payments,
+      public counts, payment expiry).
+- [ ] Vercel env vars present for Production, then redeployed after
+      any change (env changes do not apply to existing deployments).
+- [ ] `NEXT_PUBLIC_APP_URL=https://p12vizha.vercel.app` in Vercel.
+- [ ] Supabase redirect URLs include local + production callbacks.
+- [ ] Vercel Deployment Protection does not block the production
+      domain for visitors.
+- [ ] Sandbox purchase + refund verified in production before going
+      live with real money.
+
 ## Current status / blockers
 
 - Supabase project: created (`unvhxnyydbimszvheqif`); foundation
@@ -144,5 +213,10 @@ account country/currency or test with a USD-priced event.
   (attendee privacy), so public pages get counts from the
   counts-only `get_public_registration_counts()` RPC (migration
   `20261027000004_public_counts.sql`, applied and verified live).
-- Tenant-isolation / RLS integration tests will be added with the
-  features they protect (Phases 3–5), per the incremental plan.
+- Phase 5: unit tests cover env validation, money/payment helpers,
+  and migration security invariants (36 tests). Supabase boundary
+  integration tests are opt-in via `npm run test:integration`.
+  Migration `20261027000005_payment_expiry.sql` (stale pending-payment
+  cleanup) is written and must be applied in the SQL Editor.
+  Refund path is implemented; run the refund verification above once
+  per environment.

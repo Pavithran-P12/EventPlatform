@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { UndoIcon } from "@/components/icons";
 import { cancelPendingOrder, getOrderById } from "@/lib/payments/orders";
 
 async function CancelContent({
@@ -17,7 +18,7 @@ async function CancelContent({
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-16 sm:px-6">
       <div className="rounded-2xl bg-white p-8 text-center shadow-card ring-1 ring-slate-200/70">
-        <p className="text-4xl">↩️</p>
+        <UndoIcon className="mx-auto h-12 w-12 text-slate-400" />
         <h1 className="mt-3 text-2xl font-bold text-slate-900">
           Checkout cancelled
         </h1>

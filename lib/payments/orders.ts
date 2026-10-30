@@ -185,6 +185,21 @@ export async function applyRefund(input: {
     .eq("status", "confirmed");
 }
 
+/**
+ * Expire abandoned pending checkouts and release their seats.
+ * Backed by a service-role-only database function; safe to call repeatedly.
+ */
+export async function expireStalePendingPayments(
+  staleAfterMinutes = 30,
+): Promise<number> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("expire_stale_pending_payments", {
+    stale_after: `${staleAfterMinutes} minutes`,
+  });
+  if (error) throw new Error(error.message);
+  return typeof data === "number" ? data : 0;
+}
+
 /** Cancel a pending order and release its reserved seat. */
 export async function cancelPendingOrder(order: OrderRecord): Promise<void> {
   const admin = createAdminClient();

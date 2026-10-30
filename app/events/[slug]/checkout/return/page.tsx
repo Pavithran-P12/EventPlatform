@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import {
+  AlertCircleIcon,
+  CheckCircleIcon,
+  ClockIcon,
+} from "@/components/icons";
 import { getPublicEventBySlug } from "@/lib/db/queries";
 import {
   applyVerifiedPayment,
@@ -56,7 +61,7 @@ async function ReturnContent({
       <div className="rounded-2xl bg-white p-8 text-center shadow-card ring-1 ring-slate-200/70">
         {status === "paid" ? (
           <>
-            <p className="text-4xl">✅</p>
+            <CheckCircleIcon className="mx-auto h-12 w-12 text-emerald-500" />
             <h1 className="mt-3 text-2xl font-bold text-slate-900">
               Payment confirmed
             </h1>
@@ -67,7 +72,7 @@ async function ReturnContent({
           </>
         ) : status === "failed" ? (
           <>
-            <p className="text-4xl">⚠️</p>
+            <AlertCircleIcon className="mx-auto h-12 w-12 text-amber-500" />
             <h1 className="mt-3 text-2xl font-bold text-slate-900">
               Payment did not complete
             </h1>
@@ -78,7 +83,7 @@ async function ReturnContent({
           </>
         ) : (
           <>
-            <p className="text-4xl">⏳</p>
+            <ClockIcon className="mx-auto h-12 w-12 text-indigo-500" />
             <h1 className="mt-3 text-2xl font-bold text-slate-900">
               Payment processing
             </h1>
