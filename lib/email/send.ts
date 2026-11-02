@@ -10,7 +10,7 @@ import {
 const RESEND_API_URL = "https://api.resend.com/emails";
 // Resend's shared test sender; replace with a verified domain address
 // via EMAIL_FROM before sending to arbitrary recipients in production.
-const DEFAULT_FROM = "EventPlatform <onboarding@resend.dev>";
+const DEFAULT_FROM = "p12Vizha <onboarding@resend.dev>";
 
 export function isEmailConfigured(): boolean {
   try {

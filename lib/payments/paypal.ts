@@ -109,7 +109,7 @@ export async function createPayPalOrder(input: {
         },
       ],
       application_context: {
-        brand_name: "EventPlatform",
+        brand_name: "p12Vizha",
         user_action: "PAY_NOW",
         return_url: input.returnUrl,
         cancel_url: input.cancelUrl,

@@ -30,7 +30,7 @@ export default function LoginPage({
       <header className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
           <LogoMark />
-          EventPlatform
+          p12Vizha
         </Link>
         <Link
           href="/events"

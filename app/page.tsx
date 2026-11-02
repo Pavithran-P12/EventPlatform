@@ -185,7 +185,7 @@ export default function HomePage() {
                 Featured events
               </h2>
               <p className="mt-1 text-muted-foreground">
-                Happening soon on EventPlatform
+                Happening soon on p12Vizha
               </p>
             </div>
             <Link
@@ -231,9 +231,9 @@ export default function HomePage() {
       </main>
       <footer className="border-t border-border bg-card">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:px-6">
-          <p className="font-medium text-foreground">EventPlatform</p>
+          <p className="font-medium text-foreground">p12Vizha</p>
           <p>One platform for symposiums, tournaments, workshops, and community events.</p>
-          <p>© 2026 EventPlatform</p>
+          <p>© 2026 p12Vizha</p>
         </div>
       </footer>
     </div>

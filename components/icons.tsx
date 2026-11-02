@@ -13,14 +13,18 @@ function base(props: IconProps) {
   };
 }
 
+// p12Vizha mark: a thoranam (mango-leaf festoon) hung in a doorway arch.
+// Source artwork: public/brand/p12vizha-icon.svg
 export function LogoMark({ className }: IconProps) {
   return (
-    <span
-      className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 font-bold text-white shadow-md shadow-indigo-600/25 ${className ?? "h-9 w-9 text-base"}`}
+    <svg
+      viewBox="0 0 256 256"
+      className={`shrink-0 drop-shadow-sm ${className ?? "h-9 w-9"}`}
       aria-hidden="true"
     >
-      E
-    </span>
+      <path fill="#1F7A4C" d="M60 8H196A52 52 0 0 1 248 60V196A52 52 0 0 1 196 248H60A52 52 0 0 1 8 196V60A52 52 0 0 1 60 8Z" />
+      <path fill="#FFFFFF" d="M52 79.68A161 161 0 0 1 204 79.68A11 11 0 0 1 204 101.68A139 139 0 0 0 52 101.68A11 11 0 0 1 52 79.68ZM86 92C107 101.6 111 132 86 172C61 132 65 101.6 86 92ZM128 86C151.1 99.2 155.5 141 128 196C100.5 141 104.9 99.2 128 86ZM170 92C191 101.6 195 132 170 172C145 132 149 101.6 170 92Z" />
+    </svg>
   );
 }
 

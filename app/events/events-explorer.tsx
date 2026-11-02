@@ -34,7 +34,7 @@ export default function EventsExplorer({ events }: { events: PublicEvent[] }) {
           </h1>
           <p className="mt-2 text-slate-500">
             Symposiums, tournaments, workshops, and community events — hosted by
-            verified organisers on EventPlatform.
+            verified organisers on p12Vizha.
           </p>
         </div>
 

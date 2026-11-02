@@ -164,7 +164,7 @@ idempotent via `registrations.confirmation_email_sent_at`
 3. `EMAIL_FROM` is optional. Default is Resend's test sender
    (`onboarding@resend.dev`), which can **only** deliver to your own
    Resend account email. To email attendees, verify a domain in
-   Resend and set e.g. `EMAIL_FROM=EventPlatform <tickets@yourdomain>`.
+   Resend and set e.g. `EMAIL_FROM=p12Vizha <tickets@yourdomain>`.
 
 Verified locally and in production 2026-10-31: free registrations
 triggered confirmation sends accepted by Resend, with

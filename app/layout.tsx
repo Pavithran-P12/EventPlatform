@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EventPlatform — Run events without the admin chaos",
+  title: "p12Vizha — Run events without the admin chaos",
   description:
     "Create events, collect registrations and payments, manage schedules and check-ins — one reusable platform for symposiums, tournaments, workshops, and community events.",
 };

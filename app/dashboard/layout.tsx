@@ -54,7 +54,7 @@ async function DashboardShell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMark />
             <span className="text-[15px] font-bold tracking-tight text-slate-900">
-              EventPlatform
+              p12Vizha
             </span>
           </Link>
           <div className="lg:hidden">

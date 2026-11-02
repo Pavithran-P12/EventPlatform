@@ -70,7 +70,7 @@ export function LoginForm({ errorCode }: { errorCode?: string }) {
       <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
         <div className="flex items-center gap-2.5 font-semibold tracking-tight">
           <LogoMark />
-          EventPlatform
+          p12Vizha
         </div>
         <h1 className="mt-7 text-2xl font-bold tracking-tight">
           Welcome back
@@ -105,7 +105,7 @@ export function LoginForm({ errorCode }: { errorCode?: string }) {
         </p>
       </div>
       <p className="mt-5 text-center text-xs text-muted-foreground">
-        New to EventPlatform? Signing in creates your organiser account.
+        New to p12Vizha? Signing in creates your organiser account.
       </p>
     </div>
   );

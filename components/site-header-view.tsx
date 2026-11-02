@@ -13,7 +13,7 @@ export function SiteHeaderView({
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
           <LogoMark />
-          EventPlatform
+          p12Vizha
         </Link>
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
           <Link href="/events" className="transition hover:text-foreground">

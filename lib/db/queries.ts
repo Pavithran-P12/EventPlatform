@@ -169,7 +169,7 @@ export async function getPublicEvents(): Promise<PublicEvent[]> {
     organization_name:
       (Array.isArray(event.organizations)
         ? event.organizations[0]?.name
-        : event.organizations?.name) ?? "EventPlatform organiser",
+        : event.organizations?.name) ?? "p12Vizha organiser",
     registered_count: counts.get(event.id) ?? 0,
   }));
 }
@@ -196,7 +196,7 @@ export async function getPublicEventBySlug(
     organization_name:
       (Array.isArray(event.organizations)
         ? event.organizations[0]?.name
-        : event.organizations?.name) ?? "EventPlatform organiser",
+        : event.organizations?.name) ?? "p12Vizha organiser",
     registered_count: counts.get(event.id) ?? 0,
   };
 }

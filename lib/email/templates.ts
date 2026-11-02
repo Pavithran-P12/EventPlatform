@@ -54,7 +54,7 @@ export function renderConfirmationEmail(
     "",
     "Show this email at check-in. If you can no longer attend, please contact the organiser.",
     "",
-    "— EventPlatform",
+    "— p12Vizha",
   ].join("\n");
 
   const rows: Array<[string, string]> = [
@@ -81,7 +81,7 @@ export function renderConfirmationEmail(
     <table style="border-collapse:collapse">${rowsHtml}</table>
     <p style="margin:24px 0 0;color:#64748b;font-size:13px">Show this email at check-in. If you can no longer attend, please contact the organiser.</p>
   </div>
-  <p style="text-align:center;color:#94a3b8;font-size:12px;margin:16px 0 0">Sent by EventPlatform on behalf of ${escapeHtml(input.organizationName)}</p>
+  <p style="text-align:center;color:#94a3b8;font-size:12px;margin:16px 0 0">Sent by p12Vizha on behalf of ${escapeHtml(input.organizationName)}</p>
 </div>
 </body></html>`;
 
