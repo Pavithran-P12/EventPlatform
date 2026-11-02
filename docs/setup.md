@@ -135,6 +135,31 @@ Integration tests are opt-in (`RUN_INTEGRATION_TESTS=1` is set by the
 cannot read registrations or webhook events, public counts are
 aggregate-only, and payment expiry is service-role only.
 
+### Demo seed data (dummy organisers / events / participants)
+
+Migration `20261027000008_event_category_and_demo_seed.sql` adds
+`events.category` and `purge_demo_seed()`. Apply it once (SQL Editor),
+then:
+
+```bash
+npm run seed:demo          # 6 demo organisers, 15 events (3 per category), ~2,400 participants
+npm run seed:demo:purge    # remove ALL demo data only
+```
+
+Every dummy row is tagged `demo-seed` (org/event slug prefix,
+`@demo-seed.example.com` emails, `Demo —` org names). One-trigger
+cleanup in the SQL Editor:
+
+```sql
+select public.purge_demo_seed();
+```
+
+It deletes only demo rows; real organisations, events and users are
+untouched (verified: purge removed 2,378 registrations / 15 events /
+6 orgs / 6 users and left real data intact). Re-running `seed:demo`
+purges first, so it is idempotent. Demo organiser logins are
+`organizer-N@demo-seed.example.com` — not for real use.
+
 ### Abandoned checkout cleanup
 
 Migration `20261027000005_payment_expiry.sql` adds

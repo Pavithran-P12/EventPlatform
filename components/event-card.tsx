@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { PublicEvent } from "@/lib/db/types";
+import { categoryLabel, type PublicEvent } from "@/lib/db/types";
 import {
   formatDateRange,
   formatPrice,
@@ -22,6 +22,9 @@ export default function EventCard({ event }: { event: PublicEvent }) {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-transparent" />
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm">
           {event.organization_name}
+        </span>
+        <span className="absolute bottom-12 left-4 rounded-full bg-slate-950/55 px-2.5 py-1 text-xs font-semibold text-white">
+          {categoryLabel(event.category)}
         </span>
         <span
           className={`absolute right-4 top-4 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm ${

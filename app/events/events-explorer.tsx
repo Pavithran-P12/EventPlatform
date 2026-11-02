@@ -2,7 +2,11 @@
 
 import { useMemo, useState } from "react";
 
-import type { PublicEvent } from "@/lib/db/types";
+import {
+  EVENT_CATEGORIES,
+  type EventCategory,
+  type PublicEvent,
+} from "@/lib/db/types";
 import EventCard from "@/components/event-card";
 import { SiteHeaderView } from "@/components/site-header-view";
 import { SearchIcon } from "@/components/icons";
@@ -10,10 +14,12 @@ import { SearchIcon } from "@/components/icons";
 export default function EventsExplorer({ events }: { events: PublicEvent[] }) {
   const [query, setQuery] = useState("");
   const [freeOnly, setFreeOnly] = useState(false);
+  const [category, setCategory] = useState<EventCategory | "all">("all");
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
     return events.filter((event) => {
+      if (category !== "all" && event.category !== category) return false;
       if (freeOnly && !event.is_free) return false;
       if (!term) return true;
       return (
@@ -22,7 +28,7 @@ export default function EventsExplorer({ events }: { events: PublicEvent[] }) {
         (event.location ?? "").toLowerCase().includes(term)
       );
     });
-  }, [events, query, freeOnly]);
+  }, [events, query, freeOnly, category]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -63,6 +69,24 @@ export default function EventsExplorer({ events }: { events: PublicEvent[] }) {
           </button>
         </div>
 
+        <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+          {[{ key: "all" as const, label: "All categories" }, ...EVENT_CATEGORIES].map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              onClick={() => setCategory(c.key)}
+              aria-pressed={category === c.key}
+              className={`rounded-full px-3.5 py-1.5 text-sm font-medium shadow-sm ring-1 transition ${
+                category === c.key
+                  ? "bg-slate-900 text-white ring-slate-900"
+                  : "bg-white text-slate-600 ring-slate-200 hover:ring-slate-300"
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
         <p className="mt-6 text-sm text-slate-500" aria-live="polite">
           {filtered.length} event{filtered.length === 1 ? "" : "s"} found
         </p>
@@ -79,6 +103,7 @@ export default function EventsExplorer({ events }: { events: PublicEvent[] }) {
               onClick={() => {
                 setQuery("");
                 setFreeOnly(false);
+                setCategory("all");
               }}
               className="mt-5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
             >

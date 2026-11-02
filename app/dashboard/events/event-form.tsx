@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import type { EventFormInput } from "@/lib/validation/phase3";
+import { EVENT_CATEGORIES, type EventCategory } from "@/lib/db/types";
 import { CheckCircleIcon } from "@/components/icons";
 
 const MODULE_OPTIONS = [
@@ -14,6 +15,7 @@ const MODULE_OPTIONS = [
 
 export type EventFormValues = {
   title: string;
+  category: EventCategory;
   description: string;
   startsAt: string;
   endsAt: string;
@@ -27,6 +29,7 @@ export type EventFormValues = {
 
 export const emptyEventForm: EventFormValues = {
   title: "",
+  category: "community",
   description: "",
   startsAt: "",
   endsAt: "",
@@ -83,6 +86,7 @@ export default function EventForm({
     setPending(true);
     const result = await onSubmit({
       title: values.title,
+      category: values.category,
       description: values.description || undefined,
       startsAt: values.startsAt,
       endsAt: values.endsAt,
@@ -116,6 +120,17 @@ export default function EventForm({
         <input id="event-title" required minLength={3} maxLength={200} value={values.title}
           onChange={(e) => set("title", e.target.value)} placeholder="e.g. Innovate 2026 Tech Symposium"
           className={inputClass} />
+      </div>
+
+      <div>
+        <label htmlFor="event-category" className="text-sm font-medium text-slate-700">Category</label>
+        <select id="event-category" value={values.category}
+          onChange={(e) => set("category", e.target.value as EventCategory)}
+          className={inputClass}>
+          {EVENT_CATEGORIES.map((c) => (
+            <option key={c.key} value={c.key}>{c.label}</option>
+          ))}
+        </select>
       </div>
 
       <div>

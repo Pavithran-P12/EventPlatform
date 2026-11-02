@@ -36,6 +36,16 @@ describe("database security invariants", () => {
     expect(lockdown).toContain("from anon, authenticated");
   });
 
+  it("keeps demo seed separable with a single purge trigger", () => {
+    const sql = migration("20261027000008_event_category_and_demo_seed.sql");
+    expect(sql).toContain("create type public.event_category");
+    expect(sql).toContain("add column if not exists category");
+    expect(sql).toContain("create or replace function public.purge_demo_seed()");
+    expect(sql).toContain("e.slug like 'demo-seed-%'");
+    expect(sql).toContain("email like '%@demo-seed.example.com'");
+    expect(sql).toContain("revoke all on function public.purge_demo_seed() from anon, authenticated");
+  });
+
   it("enforces paid registration capacity and duplicates in the database", () => {
     const sql = migration("20261027000003_payments.sql");
     expect(sql).toContain("raise exception 'ALREADY_REGISTERED'");

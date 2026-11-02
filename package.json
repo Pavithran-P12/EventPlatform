@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "seed:demo:purge": "node scripts/seed-demo.mjs --purge"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

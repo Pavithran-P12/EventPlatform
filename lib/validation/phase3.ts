@@ -11,6 +11,9 @@ export const createOrganizationSchema = z.object({
 export const eventFormSchema = z
   .object({
     title: z.string().trim().min(3).max(200),
+    category: z
+      .enum(["symposium", "sports", "workshop", "community", "conference"])
+      .default("community"),
     description: z.string().trim().max(10000).optional(),
     startsAt: z.string().min(1),
     endsAt: z.string().min(1),

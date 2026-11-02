@@ -6,6 +6,7 @@ import {
   getPublicEventBySlug,
   getPublicRegistrationFields,
 } from "@/lib/db/queries";
+import { categoryLabel } from "@/lib/db/types";
 import {
   formatDateRange,
   formatPrice,
@@ -46,6 +47,9 @@ async function EventDetail({ params }: { params: Promise<{ slug: string }> }) {
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-slate-700">
                 {event.organization_name}
+              </span>
+              <span className="rounded-full bg-slate-950/55 px-2.5 py-1 text-xs font-semibold text-white">
+                {categoryLabel(event.category)}
               </span>
               <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${event.is_free ? "bg-emerald-500 text-white" : "bg-white/95 text-slate-800"}`}>
                 {formatPrice(event)}

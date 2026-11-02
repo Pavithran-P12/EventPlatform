@@ -1,5 +1,23 @@
 export type OrganizationRole = "owner" | "admin" | "member";
 export type EventStatus = "draft" | "published" | "cancelled" | "completed";
+export type EventCategory =
+  | "symposium"
+  | "sports"
+  | "workshop"
+  | "community"
+  | "conference";
+
+export const EVENT_CATEGORIES: { key: EventCategory; label: string }[] = [
+  { key: "symposium", label: "Symposium" },
+  { key: "sports", label: "Sports" },
+  { key: "workshop", label: "Workshop" },
+  { key: "community", label: "Community" },
+  { key: "conference", label: "Conference" },
+];
+
+export function categoryLabel(category: EventCategory): string {
+  return EVENT_CATEGORIES.find((c) => c.key === category)?.label ?? category;
+}
 export type EventModuleKey = "registration" | "payments" | "schedule" | "checkin";
 export type RegistrationStatus =
   | "confirmed"
@@ -29,6 +47,7 @@ export type EventRecord = {
   title: string;
   slug: string;
   description: string | null;
+  category: EventCategory;
   status: EventStatus;
   starts_at: string;
   ends_at: string;

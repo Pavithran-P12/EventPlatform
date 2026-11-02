@@ -51,6 +51,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
 
   const initial: EventFormValues = {
     title: event.title,
+    category: event.category,
     description: event.description ?? "",
     startsAt: toLocalInput(event.starts_at),
     endsAt: toLocalInput(event.ends_at),

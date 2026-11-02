@@ -14,7 +14,7 @@ import type {
 } from "@/lib/db/types";
 
 const EVENT_COLUMNS =
-  "id, organization_id, created_by, title, slug, description, status, starts_at, ends_at, timezone, location, is_online, capacity, is_free, price_cents, currency, is_public, cover_image_path, created_at, updated_at";
+  "id, organization_id, created_by, title, slug, description, category, status, starts_at, ends_at, timezone, location, is_online, capacity, is_free, price_cents, currency, is_public, cover_image_path, created_at, updated_at";
 
 type MembershipRow = {
   role: OrganizationMembership["role"];

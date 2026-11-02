@@ -32,6 +32,7 @@ function toEventRow(input: EventFormInput, organizationId: string, userId: strin
     organization_id: organizationId,
     created_by: userId,
     title: input.title,
+    category: input.category,
     slug,
     description: input.description ?? null,
     starts_at: new Date(input.startsAt).toISOString(),
@@ -115,6 +116,7 @@ export async function updateEventAction(
     .from("events")
     .update({
       title: row.title,
+      category: row.category,
       description: row.description,
       starts_at: row.starts_at,
       ends_at: row.ends_at,
